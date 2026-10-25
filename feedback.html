@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-site-lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反馈 · 墨库知识库 Moku</title>
+<meta name="description" content="向墨库知识库反馈问题与建议：QQ 邮箱直达、Gmail 网页写信、站内草稿一键打开邮件客户端，以及 GitHub Issues。Feedback page for Moku, the single-file Markdown knowledge base.">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%23a855f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='68' font-family='sans-serif' font-size='52' font-weight='bold' fill='%23ffffff' text-anchor='middle'%3E墨%3C/text%3E%3C/svg%3E">
+
+<style>
+/* ============ 设计变量（与首页一致，配色取自墨库应用本体） ============ */
+:root {
+  --ink-900: #0f172a;
+  --ink-700: #1e293b;
+  --ink-500: #475569;
+  --ink-400: #94a3b8;
+  --brand: #4f46e5;
+  --brand-500: #6366f1;
+  --brand-100: #e0e7ff;
+  --brand-50: #eef2ff;
+  --line: #e2e8f0;
+  --shadow-soft: 0 4px 24px -6px rgba(79, 70, 229, .14), 0 2px 8px -2px rgba(15, 23, 42, .06);
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  color: var(--ink-700);
+  background: linear-gradient(135deg, #f6f7ff 0%, #eef2ff 45%, #fdf5ff 100%);
+  background-attachment: fixed;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a { color: var(--brand); text-decoration: none; }
+
+/* ============ 双语切换：默认中文，另一语言隐藏 ============ */
+html[data-site-lang="zh"] [data-lang="en"] { display: none !important; }
+html[data-site-lang="en"] [data-lang="zh"] { display: none !important; }
+
+.wrap { max-width: 780px; margin: 0 auto; padding: 0 16px 56px; }
+
+/* —— 顶栏：返回 + 语言切换 —— */
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap;
+  padding: 16px 0 8px;
+}
+.backlink { color: var(--ink-500); font-size: .92rem; font-weight: 600; }
+.backlink:hover { color: var(--brand-500); }
+.lang-toggle {
+  display: inline-flex; background: #fff; border: 1px solid var(--line);
+  border-radius: 10px; padding: 3px; gap: 2px;
+}
+.lang-toggle button {
+  border: none; background: transparent; cursor: pointer;
+  font: 700 .78rem/1 var(--font); color: var(--ink-500);
+  padding: 6px 11px; border-radius: 8px; transition: all .15s ease;
+}
+.lang-toggle button.on { background: var(--brand-500); color: #fff; box-shadow: 0 2px 8px -2px rgba(99, 102, 241, .6); }
+.lang-toggle button:not(.on):hover { color: var(--brand-500); }
+
+header.page-head { text-align: center; padding: 22px 0 6px; }
+.page-head h1 {
+  margin: 0 0 8px; font-size: 1.9rem; font-weight: 800;
+  color: var(--ink-900); letter-spacing: -.01em; line-height: 1.3;
+}
+.page-head h1 .grad {
+  background: linear-gradient(120deg, #6366f1 10%, #a855f7 55%, #0ea5e9 95%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.page-head p { color: var(--ink-500); font-size: .98rem; }
+
+/* —— 顶部必看提示 —— */
+.notice {
+  margin: 22px 0 26px; padding: 12px 16px;
+  background: var(--brand-50);
+  border: 1px solid #c7d2fe; border-radius: 12px;
+  color: #3730a3; font-size: .93rem;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.notice svg { flex: 0 0 auto; margin-top: 4px; color: #f59e0b; }
+.notice b { color: #312e81; }
+
+/* —— 卡片 —— */
+.card {
+  background: rgba(255, 255, 255, .82);
+  border: 1px solid rgba(226, 232, 240, .9); border-radius: 16px;
+  padding: 22px 24px; margin-bottom: 18px;
+  box-shadow: var(--shadow-soft);
+}
+.card h2 {
+  margin: 0 0 6px; font-size: 1.12rem; font-weight: 800; color: var(--ink-900);
+  display: flex; align-items: center; gap: 9px;
+}
+.card h2 svg { color: var(--brand-500); flex: 0 0 auto; }
+.card > p.hint { margin: 0 0 14px; color: var(--ink-400); font-size: .88rem; }
+
+.email-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+  background: #fff; border: 1px solid var(--line);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+}
+.email-row .addr { font-size: .95rem; font-weight: 700; color: var(--ink-900); word-break: break-all; }
+.email-row .addr small { display: block; font-weight: 400; color: var(--ink-400); font-size: .78rem; }
+
+.btnrow { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border-radius: 10px; padding: 9px 18px;
+  font-size: .92rem; font-weight: 600; font-family: inherit; cursor: pointer;
+  text-decoration: none; border: 1px solid var(--line);
+  background: #fff; color: var(--ink-700);
+  transition: all .15s ease;
+}
+.btn:hover { color: var(--brand-500); border-color: #a5b4fc; box-shadow: var(--shadow-soft); }
+.btn:active { transform: translateY(1px); }
+.btn--primary {
+  background: linear-gradient(135deg, #6366f1, #a855f7); border-color: transparent;
+  color: #fff; font-weight: 700;
+  box-shadow: 0 6px 18px -6px rgba(99, 102, 241, .55);
+}
+.btn--primary:hover {
+  color: #fff; border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -8px rgba(99, 102, 241, .65);
+}
+.btn--sm { padding: 6px 13px; font-size: .84rem; }
+
+textarea#fb-text {
+  width: 100%; min-height: 190px; resize: vertical;
+  background: #fff; color: var(--ink-700);
+  border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 14px; font-family: var(--font); font-size: .92rem; line-height: 1.7;
+}
+textarea#fb-text:focus { outline: 2px solid rgba(99, 102, 241, .45); border-color: var(--brand-500); }
+
+.issues-link { color: var(--brand); font-weight: 600; word-break: break-all; }
+.issues-link:hover { color: var(--brand-500); text-decoration: underline; }
+.issues-note { color: var(--ink-400); font-size: .85rem; margin: 8px 0 0; }
+
+footer.page-foot {
+  text-align: center; color: var(--ink-400);
+  font-size: .82rem; margin-top: 34px;
+}
+footer.page-foot a { color: var(--ink-500); }
+footer.page-foot a:hover { color: var(--brand-500); }
+
+.copy-ok { color: #059669 !important; border-color: #10b981 !important; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 560px) {
+  .btn { flex: 1 1 auto; }
+  .page-head h1 { font-size: 1.5rem; }
+  .card { padding: 18px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- 顶栏：返回首页 + 中英切换 -->
+    <div class="topbar">
+      <a class="backlink" href="index.html">← <span data-lang="zh">返回首页</span><span data-lang="en">Back to Home</span></a>
+      <div class="lang-toggle" role="group" aria-label="语言切换 / Language">
+        <button type="button" id="lang-btn-zh" data-setlang="zh" aria-pressed="true">中文</button>
+        <button type="button" id="lang-btn-en" data-setlang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+
+    <header class="page-head">
+      <h1><span data-lang="zh">反馈与<span class="grad">建议</span></span><span data-lang="en">Feedback &amp; <span class="grad">Suggestions</span></span></h1>
+      <p>
+        <span data-lang="zh">墨库知识库 · 欢迎告诉我们问题或想法</span>
+        <span data-lang="en">Moku Knowledge Base · Tell us what's broken or what to improve</span>
+      </p>
+    </header>
+
+    <!-- 顶部必看说明（一行） -->
+    <div class="notice" role="note">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.9 1.2 5.6L12 15.5 7 18.4l1.2-5.6L4 8.9l5.6-.6L12 3Z"/></svg>
+      <p style="margin:0">
+        <span data-lang="zh">必看：反馈邮件主题请以<b>【墨库知识库】</b>开头 —— 作者已设置自动星标，带此前缀的邮件保证会被看到。</span>
+        <span data-lang="en">Must-read: start your email subject with <b>【墨库知识库】</b> — the author has an auto-star filter, so prefixed mail is guaranteed to be seen.</span>
+      </p>
+    </div>
+
+    <!-- ① 邮箱直达 -->
+    <section class="card" aria-labelledby="email-title">
+      <h2 id="email-title">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        <span data-lang="zh">邮箱反馈</span><span data-lang="en">Email</span>
+      </h2>
+      <p class="hint">
+        <span data-lang="zh">点击按钮即打开邮件客户端 / Gmail 网页，主题与正文模板已自动填好。</span>
+        <span data-lang="en">Buttons open your mail client / Gmail web with subject and body template pre-filled.</span>
+      </p>
+
+      <!-- 主邮箱：QQ 邮箱 -->
+      <div class="email-row">
+        <p class="addr" style="margin:0">
+          898249759@qq.com
+          <small><span data-lang="zh">主邮箱 · QQ 邮箱（推荐）</span><span data-lang="en">Primary · QQ Mail (recommended)</span></small>
+        </p>
+        <span class="btnrow">
+          <a class="btn btn--primary" id="mailto-qq"
+             href="mailto:898249759@qq.com?subject=%E3%80%90%E5%A2%A8%E5%BA%93%E7%9F%A5%E8%AF%86%E5%BA%93%E3%80%91%E5%8F%8D%E9%A6%88&body=%E5%8F%8D%E9%A6%88%E5%86%85%E5%AE%B9%EF%BC%9A%0A%EF%BC%88%E8%AF%B7%E5%9C%A8%E6%AD%A4%E6%8F%8F%E8%BF%B0%E9%97%AE%E9%A2%98%E6%88%96%E5%BB%BA%E8%AE%AE%EF%BC%89%0A%0A%E7%9B%B8%E5%85%B3%E9%A1%B5%E9%9D%A2%EF%BC%9A%0A%EF%BC%88%E4%BE%8B%E5%A6%82%EF%BC%9A%E9%A6%96%E9%A1%B5%20%2F%20%E5%8A%9F%E8%83%BD%E7%89%B9%E6%80%A7%20%2F%20%E6%95%8F%E6%8D%B7%E7%9C%8B%E6%9D%BF%20%2F%20%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%20%2F%20%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%20%2F%20%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%EF%BC%89%0A%0A%E8%81%94%E7%B3%BB%E6%96%B9%E5%BC%8F%EF%BC%9A%0A%EF%BC%88%E9%80%89%E5%A1%AB%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%9B%9E%E8%AE%BF%EF%BC%89">
+            <span data-lang="zh">邮件发送</span><span data-lang="en">Send Email</span>
+          </a>
+          <button type="button" class="btn btn--sm copy-email" data-email="898249759@qq.com">
+            <span data-lang="zh">复制邮箱地址</span><span data-lang="en">Copy Address</span>
+          </button>
+        </span>
+      </div>
+
+      <!-- 次邮箱：Gmail 网页写信 -->
+      <div class="email-row">
+        <p class="addr" style="margin:0">
+          yangfan.070312@gmail.com
+          <small><span data-lang="zh">次邮箱 · Gmail（网页写信，免装客户端）</span><span data-lang="en">Secondary · Gmail (web compose, no client needed)</span></small>
+        </p>
+        <span class="btnrow">
+          <a class="btn" id="gmail-link" target="_blank" rel="noopener"
+             href="https://mail.google.com/mail/?view=cm&to=yangfan.070312@gmail.com&su=%E3%80%90%E5%A2%A8%E5%BA%93%E7%9F%A5%E8%AF%86%E5%BA%93%E3%80%91%E5%8F%8D%E9%A6%88&body=%E5%8F%8D%E9%A6%88%E5%86%85%E5%AE%B9%EF%BC%9A%0A%EF%BC%88%E8%AF%B7%E5%9C%A8%E6%AD%A4%E6%8F%8F%E8%BF%B0%E9%97%AE%E9%A2%98%E6%88%96%E5%BB%BA%E8%AE%AE%EF%BC%89%0A%0A%E7%9B%B8%E5%85%B3%E9%A1%B5%E9%9D%A2%EF%BC%9A%0A%EF%BC%88%E4%BE%8B%E5%A6%82%EF%BC%9A%E9%A6%96%E9%A1%B5%20%2F%20%E5%8A%9F%E8%83%BD%E7%89%B9%E6%80%A7%20%2F%20%E6%95%8F%E6%8D%B7%E7%9C%8B%E6%9D%BF%20%2F%20%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%20%2F%20%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%20%2F%20%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%EF%BC%89%0A%0A%E8%81%94%E7%B3%BB%E6%96%B9%E5%BC%8F%EF%BC%9A%0A%EF%BC%88%E9%80%89%E5%A1%AB%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%9B%9E%E8%AE%BF%EF%BC%89">
+            <span data-lang="zh">Gmail 网页写信</span><span data-lang="en">Compose in Gmail</span>
+          </a>
+          <button type="button" class="btn btn--sm copy-email" data-email="yangfan.070312@gmail.com">
+            <span data-lang="zh">复制邮箱地址</span><span data-lang="en">Copy Address</span>
+          </button>
+        </span>
+      </div>
+    </section>
+
+    <!-- ② 站内快速留言：textarea 拼 mailto -->
+    <section class="card" aria-labelledby="draft-title">
+      <h2 id="draft-title">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5Z"/></svg>
+        <span data-lang="zh">在线留言（站内草稿）</span><span data-lang="en">Quick Draft</span>
+      </h2>
+      <p class="hint">
+        <span data-lang="zh">在下方填写后点按钮，会为您拼好一封完整反馈邮件并打开邮件客户端。</span>
+        <span data-lang="en">Fill in below, then the button assembles a complete feedback email and opens your mail client.</span>
+      </p>
+      <label for="fb-text" class="sr-only">
+        <span data-lang="zh">反馈内容</span><span data-lang="en">Feedback content</span>
+      </label>
+      <textarea id="fb-text" placeholder=""></textarea>
+      <div class="btnrow" style="margin-top:12px">
+        <button type="button" class="btn btn--primary" id="send-mailto">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 7 9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+          <span data-lang="zh">打开邮件客户端发送</span><span data-lang="en">Open Mail Client to Send</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ③ GitHub Issues -->
+    <section class="card" aria-labelledby="issues-title">
+      <h2 id="issues-title">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M9 8.5h6M9 15.5h4"/></svg>
+        <span data-lang="zh">GitHub Issues</span><span data-lang="en">GitHub Issues</span>
+      </h2>
+      <p class="hint">
+        <span data-lang="zh">适合公开的问题报告与功能建议，处理进度透明可追踪。</span>
+        <span data-lang="en">Best for public bug reports and feature requests with trackable progress.</span>
+      </p>
+      <a class="issues-link" href="https://github.com/yangfanwudi/moku-site/issues" target="_blank" rel="noopener">https://github.com/yangfanwudi/moku-site/issues</a>
+      <p class="issues-note">
+        <span data-lang="zh">* 需要 GitHub 账号；没有账号时请优先使用上方邮箱反馈。</span>
+        <span data-lang="en">* A GitHub account is required; without one, please use the email options above.</span>
+      </p>
+    </section>
+
+    <footer class="page-foot">
+      <p style="margin:0 0 6px">
+        <span data-lang="zh">墨库 · 单文件离线 Markdown 知识库与敏捷看板</span>
+        <span data-lang="en">Moku · A single-file, offline Markdown knowledge base &amp; agile kanban</span>
+      </p>
+      <p style="margin:0"><a href="index.html">© <span id="year">2026</span> Moku · <span data-lang="zh">墨库知识库</span><span data-lang="en">Knowledge Base</span></a></p>
+    </footer>
+  </div>
+
+  <script>
+  /* ============ 反馈页：中英切换 + 邮件链接 + 复制 ============ */
+  (function () {
+    'use strict';
+
+    var SUBJECT = '【墨库知识库】反馈';
+    var MAIL_PRIMARY = '898249759@qq.com';
+    var MAIL_SECONDARY = 'yangfan.070312@gmail.com';
+    var TEMPLATES = {
+      zh: '反馈内容：\n（请在此描述问题或建议）\n\n相关页面：\n（例如：首页 / 功能特性 / 敏捷看板 / 数据备份 / 使用方法 / 常见问题）\n\n联系方式：\n（选填，方便回访）',
+      en: 'Feedback:\n(describe the issue or suggestion here)\n\nPage:\n(e.g. Home / Features / Kanban / Backup / How to use / FAQ)\n\nContact:\n(optional, so we can follow up)'
+    };
+    var PLACEHOLDERS = {
+      zh: '可直接修改下方模板后发送……',
+      en: 'Edit the template below and send…'
+    };
+    var META = {
+      zh: {
+        lang: 'zh-CN',
+        title: '反馈 · 墨库知识库 Moku',
+        desc: '向墨库知识库反馈问题与建议：QQ 邮箱直达、Gmail 网页写信、站内草稿一键打开邮件客户端，以及 GitHub Issues。'
+      },
+      en: {
+        lang: 'en',
+        title: 'Feedback · Moku Knowledge Base',
+        desc: 'Send feedback to the Moku knowledge base: QQ Mail, Gmail web compose, an in-page draft that opens your mail client, and GitHub Issues.'
+      }
+    };
+
+    /* 与首页共用同一语言偏好键，两个页面语言保持一致 */
+    var STORAGE_KEY = 'moku-site-lang';
+    var currentLang = 'zh';
+    var textarea = document.getElementById('fb-text');
+
+    /* ---------- 直达链接（静态中文兜底，JS 按 lang 刷新） ---------- */
+    function mailtoUrl(mail, subject, body) {
+      return 'mailto:' + mail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    }
+    function gmailUrl(mail, subject, body) {
+      return 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent(mail) +
+        '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    }
+    function applyDirectLinks() {
+      var t = TEMPLATES[currentLang];
+      document.getElementById('mailto-qq').href = mailtoUrl(MAIL_PRIMARY, SUBJECT, t);
+      document.getElementById('gmail-link').href = gmailUrl(MAIL_SECONDARY, SUBJECT, t);
+    }
+
+    /* ---------- 中英切换：data-site-lang 驱动 data-lang 元素 ---------- */
+    function setLang(lang) {
+      if (lang !== 'zh' && lang !== 'en') lang = 'zh';
+      currentLang = lang;
+      var meta = META[lang];
+      document.documentElement.setAttribute('data-site-lang', lang);
+      document.documentElement.setAttribute('lang', meta.lang);
+      document.title = meta.title;
+      var desc = document.querySelector('meta[name="description"]');
+      if (desc) desc.setAttribute('content', meta.desc);
+      var zhBtn = document.getElementById('lang-btn-zh');
+      var enBtn = document.getElementById('lang-btn-en');
+      if (zhBtn && enBtn) {
+        zhBtn.classList.toggle('on', lang === 'zh');
+        enBtn.classList.toggle('on', lang === 'en');
+        zhBtn.setAttribute('aria-pressed', String(lang === 'zh'));
+        enBtn.setAttribute('aria-pressed', String(lang === 'en'));
+      }
+      /* textarea 未被用户修改时，跟随语言切换模板 */
+      if (!textarea.dataset.dirty || textarea.value === textarea.dataset.lastTemplate) {
+        textarea.value = TEMPLATES[lang];
+        textarea.dataset.lastTemplate = TEMPLATES[lang];
+      }
+      textarea.placeholder = PLACEHOLDERS[lang];
+      /* 语言切换后同步刷新两个直达链接的正文模板 */
+      applyDirectLinks();
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) { /* file:// 下可能不可用，忽略 */ }
+    }
+    window.setLang = setLang;   /* 供自检脚本识别 */
+
+    document.getElementById('lang-btn-zh').addEventListener('click', function () { setLang('zh'); });
+    document.getElementById('lang-btn-en').addEventListener('click', function () { setLang('en'); });
+
+    /* ---------- textarea 草稿 → 打开邮件客户端 ---------- */
+    textarea.addEventListener('input', function () { textarea.dataset.dirty = '1'; });
+    document.getElementById('send-mailto').addEventListener('click', function () {
+      var text = textarea.value && textarea.value.trim() ? textarea.value : TEMPLATES[currentLang];
+      window.location.href = mailtoUrl(MAIL_PRIMARY, SUBJECT, text);
+    });
+
+    /* ---------- 复制邮箱地址（clipboard API + execCommand 兜底） ---------- */
+    function copyText(text, done) {
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(true); }
+        catch (e) { done(false); }
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+      } else { fallback(); }
+    }
+    document.querySelectorAll('.copy-email').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        copyText(btn.getAttribute('data-email'), function (ok) {
+          var label = btn.querySelector('[data-lang="' + currentLang + '"]');
+          if (!ok) {
+            window.prompt(currentLang === 'zh' ? '请手动复制：' : 'Copy manually:', btn.getAttribute('data-email'));
+            return;
+          }
+          if (label) {
+            var old = label.textContent;
+            label.textContent = currentLang === 'zh' ? '已复制 ✓' : 'Copied ✓';
+            btn.classList.add('copy-ok');
+            setTimeout(function () { label.textContent = old; btn.classList.remove('copy-ok'); }, 1600);
+          }
+        });
+      });
+    });
+
+    /* ---------- 初始化 ---------- */
+    document.getElementById('year').textContent = String(new Date().getFullYear());
+    textarea.value = TEMPLATES.zh;
+    textarea.dataset.lastTemplate = TEMPLATES.zh;
+    textarea.placeholder = PLACEHOLDERS.zh;
+    var saved = 'zh';
+    try { saved = localStorage.getItem(STORAGE_KEY) === 'en' ? 'en' : 'zh'; } catch (e) { /* 忽略 */ }
+    setLang(saved);
+  })();
+  </script>
+</body>
+</html>
